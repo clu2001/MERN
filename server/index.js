@@ -8,7 +8,6 @@ const mongoose = require("mongoose");
 // running in the background, still need to connect to server
 mongoose.connect("mongodb://localhost/test5", { useNewUrlParser: true, useUnifiedTopology: true }); 
 
-// schema 
 const Todo = mongoose.model('Todo', {
     // can pass two fields in, text and whether its complete or not
     text: String, 
@@ -22,6 +21,7 @@ const Todo = mongoose.model('Todo', {
 const typeDefs = `
   type Query {
     hello(name: String): String!
+    todos: [Todo]
   }
   type Todo {
       id: ID! 
@@ -30,6 +30,8 @@ const typeDefs = `
   }
   type Mutation {
       createTodo(text: String!): Todo
+      updateTodo(id: ID!, complete: Boolean!): Boolean
+      removeTodo(id: ID!): Boolean
   }`
 
     // if name is given, it is passed in as 'Hello (name) World' 
@@ -37,6 +39,7 @@ const typeDefs = `
 const resolvers = {
     Query: {
         hello: (_, { name }) => `Hello ${name || 'World'}`,
+        todos: () => Todo.find()
     },
     Mutation: {
         createTodo: async (_, { text }) => {
@@ -44,6 +47,14 @@ const resolvers = {
             // saves to database as a promise
             await todo.save(); 
             return todo; 
+        },
+        updateTodo: async (_, {id, complete}) => {
+            await Todo.findByIdAndUpdate(id, { complete }); 
+            return true; 
+        }, 
+        removeTodo: async (_, {id}) => {
+            await Todo.findByIdAndRemove(id);
+            return true; 
         }
     }
 }; 
