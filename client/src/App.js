@@ -22,81 +22,67 @@ const TodosQuery = gql`
   `; 
 
 class App extends Component {
+  
+  state = {
+    checked: [0], 
+  }; 
+
+  handleToggle = value => () => {
+    const { checked } = this.state; 
+    const currentIndex = checked.indexOf(value); 
+    const newChecked = [...checked]; 
+
+    if (currentIndex === -1) {
+      newChecked.push(value); 
+   } else {
+     newChecked.splice(currentIndex, 1); 
+   }
+
+   this.setState({
+     checked: newChecked, 
+   }); 
+  }; 
+
   render() {
     
     const {data: {loading, todos}} = this.props; 
     if (loading) {
       return null; 
     }
-
-
     // div contains a key that holds a unique string for each todo item
     return (
     
     <div style={{ display: 'flex' }}>
       <div style={{margin: 'auto', width: 400}}>
         <Paper elevation={1}>
-          <div>{todos.map(todo => <div key={`${todo.id}-todo-item`}>{todo.text}</div>)}</div>
+          {/*<div>{todos.map(todo => <div key={`${todo.id}-todo-item`}>{todo.text}</div>)}</div>*/}
+          <List>
+            {todos.map(todo => (
+                <ListItem key={todo.id} role={undefined} dense button onClick={this.handleToggle(todo)}>
+                  <ListItemIcon>
+                    <Checkbox
+                      edge="start"
+                      checked={todo.complete}
+                      tabIndex={-1}
+                      disableRipple
+                      
+                    />
+                  </ListItemIcon>
+                  <ListItemText primary={todo.text} />
+                  <ListItemSecondaryAction>
+                    <IconButton edge="end" aria-label="comments">
+                      <CommentIcon />
+                    </IconButton>
+                  </ListItemSecondaryAction>
+                </ListItem>
+              ))}; 
+          </List>
         </Paper>
       </div>
     </div>
     ); 
   }
   
-}
-
-const useStyles = makeStyles((theme) => ({
-  root: {
-    width: '100%',
-    maxWidth: 360,
-    backgroundColor: theme.palette.background.paper,
-  },
-}));
-
-export default function CheckboxList() {
-  const classes = useStyles();
-  const [checked, setChecked] = React.useState([0]);
-
-  const handleToggle = (value) => () => {
-    const currentIndex = checked.indexOf(value);
-    const newChecked = [...checked];
-
-    if (currentIndex === -1) {
-      newChecked.push(value);
-    } else {
-      newChecked.splice(currentIndex, 1);
-    }
-
-    setChecked(newChecked);
-  };
-
-  return (
-    <List className={classes.root}>
-      {[0, 1, 2, 3].map((value) => {
-        const labelId = `checkbox-list-label-${value}`;
-
-        return (
-          <ListItem key={value} role={undefined} dense button onClick={handleToggle(value)}>
-            <ListItemIcon>
-              <Checkbox
-                edge="start"
-                checked={checked.indexOf(value) !== -1}
-                tabIndex={-1}
-                disableRipple
-                inputProps={{ 'aria-labelledby': labelId }}
-              />
-            </ListItemIcon>
-            <ListItemText id={labelId} primary={`Line item ${value + 1}`} />
-            <ListItemSecondaryAction>
-              <IconButton edge="end" aria-label="comments">
-                <CommentIcon />
-              </IconButton>
-            </ListItemSecondaryAction>
-          </ListItem>
-        );
-      })}
-    </List>
-  );
 }
 
 
