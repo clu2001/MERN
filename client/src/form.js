@@ -3,20 +3,39 @@ import TextField from "@material-ui/core/TextField";
 
 export default class Form extends React.Component {
 
-    state = {
-        text: ""
 
+    state = {
+        text: "", 
     }
 
-    handleOnChange = (e) => {
+    handleChange = (e) => {
         const newText = e.target.value; 
         this.setState({
             text: newText
         }); 
     }; 
-    
+
+    handleKeyDown = (e) => {
+        console.log(e); 
+        if (e.key === "Enter") {
+            this.props.submit(this.state.text); 
+        }
+    }; 
+
+
     render() {
+
         const { text } = this.state; 
-        return (<TextField onChange={this.handleOnChange} label="todo..."margin="normal" value={text} fullWidth />); 
+
+
+        return (
+            <TextField
+                onChange={(this.handleChange)}
+                label="todo..."
+                margin="normal"
+                value={text}
+                fullWidth
+            />
+        )
     }
 }

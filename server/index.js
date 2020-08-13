@@ -10,6 +10,7 @@ mongoose.connect("mongodb://localhost/test5", { useNewUrlParser: true, useUnifie
 
 const Todo = mongoose.model('Todo', {
     // can pass two fields in, text and whether its complete or not
+    // saves in database 
     text: String, 
     complete: Boolean
 }); 
@@ -45,14 +46,15 @@ const resolvers = {
         createTodo: async (_, { text }) => {
             const todo = new Todo({ text, complete: false}); 
             // saves to database as a promise
+            // .save() returns a promise, and thus we have to await it 
             await todo.save(); 
             return todo; 
         },
-        updateTodo: async (_, {id, complete}) => {
+        updateTodo: async (_, { id, complete }) => {
             await Todo.findByIdAndUpdate(id, { complete }); 
             return true; 
         }, 
-        removeTodo: async (_, {id}) => {
+        removeTodo: async (_, { id }) => {
             await Todo.findByIdAndRemove(id);
             return true; 
         }

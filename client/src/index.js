@@ -5,6 +5,7 @@ import * as serviceWorker from './serviceWorker';
 import { ApolloClient, InMemoryCache } from '@apollo/client';
 import { ApolloProvider } from 'react-apollo'; 
 
+
 const client = new ApolloClient({
   uri: 'http://localhost:4000',
   cache: new InMemoryCache()
